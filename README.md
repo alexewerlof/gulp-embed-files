@@ -96,7 +96,7 @@ doesn't duplicate what is already possible using other gulp plugins.
 
 So let's see how it plays nicely with others in some of the common use case scenarios:
 
-###Add only the text files into a json file
+###0. Add only the text files into a json file
 ```javascript
 var gulp = require('gulp');
 var embedFiles = require('./../index.js');
@@ -111,7 +111,7 @@ gulp.task('default', function () {
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output0.js)
 
 
-###Add a bunch of files into an object and assign it to a Javascript variable
+###1. Add a bunch of files into an object and assign it to a Javascript variable
 
 ```javascript
 var gulp = require('gulp');
@@ -141,7 +141,7 @@ gulp.task('default', function () {
 
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output1.js)
 
-###Use UMD/AMD/Global to include files
+###2. Use UMD/AMD/Global to include files
 
 ```javascript
 var umd = require('gulp-umd');
@@ -176,7 +176,7 @@ gulp.task('default', function () {
 
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output2.js)
 
-###Show the size of the resulting file
+###3. Show the size of the resulting file
 
 ```javascript
 var gulp = require('gulp');
@@ -192,7 +192,7 @@ gulp.task('default', function () {
 });
 ```
 
-###Custom encoding for some files
+###4. Custom encoding for some files
 
 ```javascript
 var gulp = require('gulp');
@@ -212,7 +212,7 @@ gulp.task('default', function () {
 
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output4.js)
 
-###Change default encoding
+###5. Change default encoding
 
 ```javascript
 var gulp = require('gulp');
@@ -230,7 +230,7 @@ gulp.task('default', function () {
 
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output5.js)
 
-###List all the files that are being processed
+###6. List all the files that are being processed
 
 You can use [gulp-debug](https://www.npmjs.com/package/gulp-debug) to get the list of files being processed for any plugin.
 
@@ -255,7 +255,7 @@ Will output:
 [20:24:29] files being embedded: 2 items
 ```
 
-###Exclude some files
+###7. Exclude some files
 
 You can use the default gulp glob convention to exclude files.
 Just start the globe with `!` and you're good to go:
@@ -287,7 +287,47 @@ Will process the following files:
 ..\test\mydir\img\puppy.png
 ```
 
-###Access the embedded files on the client
+###8. Access the embedded files on the client
+
+For simple text files it is very easy.
+Just get the file contents like this:
+
+```javascript
+<!-- The output of the -->
+<script src="output1.js"></script>
+<script>
+    //Create a div and put the file contents in there
+    var div = document.createElement('div');
+    div.innerHTML = files['rootfile1.txt'];
+    document.body.appendChild(div);
+</script>
+```
+
+See the [full source code](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/index8a.html)
+and the [live results](http://rawgit.com/hanifbbz/gulp-embed-files/master/examples/index8a.html).
+
+For base64 encoded files you can use the `atob()` function to decode the image data:
+
+```javascript
+var results = atob(files['img/kitten.jpg']);
+//get the byte value at position pos
+results.charCodeAt(pos);
+```
+
+See the [full source code](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/index8b.html)
+and the [live results](http://rawgit.com/hanifbbz/gulp-embed-files/master/examples/index8b.html).
+
+For images, you don't even need to decode base64 images. Browsers understand them out of the box.
+You can also use `src="data:image/png;base64,..."`:
+
+```javascript
+var img = new Image;
+img.src="data:image/png;base64," + files['img/kitten.jpg'];
+document.body.appendChild(img);
+```
+
+See the [full source code](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/index8c.html)
+and the [live results](http://rawgit.com/hanifbbz/gulp-embed-files/master/examples/index8c.html).
 
 ###Override the base directory
 

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            padding: 3px;
+            cursor: default;
+        }
+        tr:hover {
+            background-color:#d0e3f8;
+        }
+        td:hover {
+            background-color: #f8d7d6;
+        }
+    </style>
+</head>
+<body>
+<table></table>
+<script src="output1.js"></script>
+<script>
+    var table = document.querySelector('table');
+    var results = atob(files['img/kitten.jpg']);
+    for (var i = 0; i < results.length; i+=16) {
+        var row = document.createElement('tr');
+        for (var j = i;j < i + 16; j++) {
+            var td = document.createElement('td');
+            if (j < results.length) {
+                td.innerHTML = results.charCodeAt(j);
+                td.title = 'Byte ' + j + ' = ' + results.charAt(j);
+            }
+            row.appendChild(td);
+        }
+        table.appendChild(row);
+    }
+</script>
+</body>
+</html>
