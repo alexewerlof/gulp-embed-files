@@ -1,0 +1,1 @@
+{"rootfile1.txt":"This is the contents of the first file in the root.","rootfile2.txt":"Hello world!\r\nThis is the contents of the first file in the root."}

@@ -5,7 +5,6 @@ var embedFiles = require('./../index.js');
 gulp.task('default', function () {
   gulp.src('../test/mydir/**/*')
     .pipe(embedFiles('output1.js', {
-      replaceSep: '/',
       space: 4,
       enc: {
         '.3DS' : 'base64',

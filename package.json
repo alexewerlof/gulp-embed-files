@@ -16,6 +16,7 @@
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-callback": "0.0.3",
+    "gulp-debug": "^2.0.1",
     "gulp-rename": "^1.2.0",
     "gulp-size": "^1.2.1",
     "gulp-umd": "^0.1.3",

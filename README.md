@@ -88,6 +88,9 @@ TODO: add an example parsing function
 
 ##Examples and recepies
 
+**All examples use the files in the `mydir` (directory)[https://github.com/hanifbbz/gulp-embed-files/tree/master/test/mydir]
+ which contains a couple of different formats**
+
 In the spirit of [rule of modularity](http://www.faqs.org/docs/artu/ch01s06.html) this gulp plugin
 doesn't duplicate what is already possible using other gulp plugins.
 
@@ -120,7 +123,6 @@ var embedFiles = require('./../index.js');
 gulp.task('default', function () {
   gulp.src('../test/mydir/**/*')
     .pipe(embedFiles('output1.js', {
-      replaceSep: '/',
       space: 4,
       enc: {
         '.3DS' : 'base64',
@@ -150,7 +152,6 @@ var embedFiles = require('./../index.js');
 gulp.task('default', function () {
   gulp.src('../test/mydir/**/*')
     .pipe(embedFiles('output2.js', {
-      replaceSep: '/',
       space: 4,
       enc: {
         '.3DS' : 'base64',
@@ -230,10 +231,67 @@ gulp.task('default', function () {
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output5.js)
 
 ###List all the files that are being processed
-###Access the embedded files on the client
-###Override the base directory
-###Embed several directories
+
+You can use [gulp-debug](https://www.npmjs.com/package/gulp-debug) to get the list of files being processed for any plugin.
+
+```javascript
+var gulp = require('gulp');
+var debug = require('gulp-debug');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*.txt')
+    .pipe(embedFiles('output0.js'))
+    .pipe(debug({title: 'files being embedded:'}))
+    .pipe(gulp.dest('.'));
+});
+```
+
+Will output:
+
+```
+[20:24:29] files being embedded: ..\test\mydir\output6.js
+[20:24:29] files being embedded: ..\test\mydir\output6.js
+[20:24:29] files being embedded: 2 items
+```
+
 ###Exclude some files
+
+You can use the default gulp glob convention to exclude files.
+Just start the globe with `!` and you're good to go:
+
+```javascript
+var gulp = require('gulp');
+var debug = require('gulp-debug');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  //Exclude all the css files
+  gulp.src(['../test/mydir/**/*', '!../test/mydir/**/*.css'])
+    //print the list of files being fed into gulp-embed-files plugin just to be sure
+    .pipe(debug())
+    .pipe(embedFiles('output7.json', {
+      space: 1
+    }))
+    .pipe(gulp.dest('.'));
+});
+```
+
+Will process the following files:
+
+```
+..\test\mydir\rootfile1.txt
+..\test\mydir\rootfile2.txt
+..\test\mydir\binary\3d model.3DS
+..\test\mydir\img\kitten.jpg
+..\test\mydir\img\puppy.png
+```
+
+###Access the embedded files on the client
+
+###Override the base directory
+
+###Embed several directories
 
 #Contributing
 
