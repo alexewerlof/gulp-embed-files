@@ -45,11 +45,10 @@ It is indeed the last parameter to JSON.stringify() @see https://developer.mozil
 So it can contain strings like '\t' or '  '
 If it is omitted, the resulting JSON will be minified (note: make a section that describes this trick under 'minification' title)
 
-###options.replaceSep {String} (default=platform dependent. '/' for Linux, Unix, Mac and '\\' for windows
+###options.replaceSep {String} (default='/')
 
-will be used to normalize all path separators.
-For example if your gulp file runs on windows, the keys would contain backslash and on unix it will contain slash.
-With replaceSep you can assing your separator. It usually is just '/' or '\\' but it can be any string.
+By default we use the unix convention with is used all around internet URLs.
+With replaceSep you can specify your own custom separator.
 For example if you use '__', a file that is in 'my-files/icons/arrow-down.svg' would be called 'my-files__icons__arrow-down.svg' in the resulting json.
 
 Note: also make a section about how to use gulp-size utility to
@@ -89,13 +88,160 @@ TODO: add an example parsing function
 
 ##Examples and recepies
 
-###Add a bunch of files into an object and assign it to a Javascript variable.
+In the spirit of [rule of modularity](http://www.faqs.org/docs/artu/ch01s06.html) this gulp plugin
+doesn't duplicate what is already possible using other gulp plugins.
+
+So let's see how it plays nicely with others in some of the common use case scenarios:
+
+###Add only the text files into a json file
+```javascript
+var gulp = require('gulp');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*.txt')
+    .pipe(embedFiles('output0.js'))
+    .pipe(gulp.dest('.'));
+});
+```
+
+See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output0.js)
+
+
+###Add a bunch of files into an object and assign it to a Javascript variable
+
+```javascript
+var gulp = require('gulp');
+var size = require('gulp-size');
+var rename = require('gulp-rename');
+var wrapper = require('gulp-wrapper');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*')
+    .pipe(embedFiles('output1.js', {
+      replaceSep: '/',
+      space: 4,
+      enc: {
+        '.3DS' : 'base64',
+        '.jpg' : 'base64',
+        '.png' : 'base64'
+      }
+    }))
+    .pipe(wrapper({
+      //Assign the resulting object to the files variable
+      header: 'var files = ',
+      footer: ';'
+    }))
+    .pipe(gulp.dest('.'));
+});
+```
+
+See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output1.js)
+
 ###Use UMD/AMD/Global to include files
-###Custom encoding for some files
-###Change default encoding
+
+```javascript
+var umd = require('gulp-umd');
+var gulp = require('gulp');
+var wrapper = require('gulp-wrapper');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*')
+    .pipe(embedFiles('output2.js', {
+      replaceSep: '/',
+      space: 4,
+      enc: {
+        '.3DS' : 'base64',
+        '.jpg' : 'base64',
+        '.png' : 'base64'
+      }
+    }))
+    //Define a variable in the module
+    .pipe(wrapper({
+      header: 'var files = ',
+      footer: ';'
+    }))
+    //Use the UMD pattern to expose it
+    .pipe(umd({
+      exports: function(file) {
+        return 'files';
+      }
+    }))
+    .pipe(gulp.dest('.'));
+});
+```
+
+See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output2.js)
+
 ###Show the size of the resulting file
+
+```javascript
+var gulp = require('gulp');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*.txt')
+    .pipe(embedFiles('output5.json', {
+      //By default use base64 encoding when the extension doesn't have a explicit definition in options.enc
+      encDefault: 'base64'
+    }))
+    .pipe(gulp.dest('.'));
+});
+```
+
+###Custom encoding for some files
+
+```javascript
+var gulp = require('gulp');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*.txt')
+    .pipe(embedFiles('output4.js', {
+      //Use hex encoding instead of utf-8
+      enc: {
+        '.txt': 'hex'
+      }
+    }))
+    .pipe(gulp.dest('.'));
+});
+```
+
+See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output4.js)
+
+###Change default encoding
+
+```javascript
+var gulp = require('gulp');
+var embedFiles = require('./../index.js');
+
+gulp.task('default', function () {
+  gulp.src('../test/mydir/**/*.txt')
+    .pipe(embedFiles('output5.json', {
+      //By default use base64 encoding when the extension doesn't have a explicit definition in options.enc
+      encDefault: 'base64'
+    }))
+    .pipe(gulp.dest('.'));
+});
+```
+
+See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output5.js)
+
 ###List all the files that are being processed
-###Access files on the client
+###Access the embedded files on the client
+###Override the base directory
+###Embed several directories
+###Exclude some files
+
+#Contributing
+
+1. Fork it
+2. Create your feature branch: git checkout -b my-new-feature
+3. Commit your changes: git commit -m 'Add some feature'
+4. Push to the branch: git push origin my-new-feature
+5. Submit a pull request
 
 #License
 

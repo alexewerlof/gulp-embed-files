@@ -8,7 +8,7 @@ var util = require('util');
 
 module.exports = function (dest, options) {
 
-  var PLUGIN_NAME = 'gulp-file-contents-to-json';
+  var PLUGIN_NAME = 'gulp-embed-files';
   if (typeof options === 'undefined') {
     if (typeof dest === 'object') {
       options = dest;
@@ -22,6 +22,8 @@ module.exports = function (dest, options) {
   var DEFAULT_ENCODING = options['encDefault'] || 'utf8';
   var first = false;
   var base, cwd;
+  //The file path separator
+  options.replaceSep = options.replaceSep || '/';
   var result = {};
   function getEncoding (extension) {
     if (options.enc) {
