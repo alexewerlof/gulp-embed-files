@@ -2,11 +2,11 @@ var gulp = require('gulp');
 var size = require('gulp-size');
 var rename = require('gulp-rename');
 var wrapper = require('gulp-wrapper');
-var fc2json = require('./../index.js');
+var embedFiles = require('./../index.js');
 
 gulp.task('default', function () {
   gulp.src('mydir/**/*')
-    .pipe(fc2json('contents.json', {
+    .pipe(embedFiles('contents.json', {
       replaceSep: '/',
       space: '\t',
       enc: {
