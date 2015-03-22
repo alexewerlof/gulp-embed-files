@@ -331,7 +331,11 @@ and the [live results](http://rawgit.com/hanifbbz/gulp-embed-files/master/exampl
 
 ###Override the base directory
 
+TODO: write me!
+
 ###Embed several directories
+
+TODO: write me!
 
 #Contributing
 
