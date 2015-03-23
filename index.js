@@ -3,24 +3,20 @@
 
 var through2 = require('through2');
 var gutil = require('gulp-util');
+var PluginError = gutil.PluginError;
 var path = require('path');
 var util = require('util');
+var PLUGIN_NAME = 'gulp-embed-files';
 
 module.exports = function (dest, options) {
 
-  var PLUGIN_NAME = 'gulp-embed-files';
-  if (typeof options === 'undefined') {
-    if (typeof dest === 'object') {
-      options = dest;
-      dest = options.dest;
-    } else if (typeof dest === 'string') {
-      options = options || {};
-    } else {
-      throw new gutil.PluginError(PLUGIN_NAME, 'Invalid dest parameter: ' + dest);
-    }
+  if (!dest) {
+    PluginError(PLUGIN_NAME, 'Invalid dest parameter');
   }
-  var DEFAULT_ENCODING = options['encDefault'] || 'utf8';
-  var first = false;
+
+  options = options || {};
+  options['encDefault'] = options['encDefault'] || 'utf8';
+  var firstFile = false;
   var base, cwd;
   //The file path separator
   options.replaceSep = options.replaceSep || '/';
@@ -29,7 +25,7 @@ module.exports = function (dest, options) {
     if (options.enc) {
       return options.enc[extension];
     } else {
-      return DEFAULT_ENCODING;
+      return options['encDefault'];
     }
   }
 
@@ -40,19 +36,19 @@ module.exports = function (dest, options) {
       //Nothing to do for directories
       return callback();
     } else if ( file.isNull() ) {
-      //The file is null? Ignore it.
+      //Ignore the empty files
       return callback();
     }
     else if ( file.isStream() ) {
       // Always error if file is a stream
-      this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported.'));
+      this.emit('error', new PluginError(PLUGIN_NAME, 'Streaming not supported.'));
       return callback();
     }
 
     try {
 
-      if (!first) {
-        first = true;
+      if (!firstFile) {
+        firstFile = true;
         base = file.base;
         cwd = file.cwd;
       }
@@ -77,7 +73,7 @@ module.exports = function (dest, options) {
       this.push(out);
       callback();
     } catch (e) {
-      this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Error:', e));
+      this.emit('error', new PluginError(PLUGIN_NAME, 'Error:', e));
       callback(e);
     }
 

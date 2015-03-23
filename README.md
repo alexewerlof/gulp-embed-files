@@ -1,6 +1,8 @@
 #Introduction
 
-Embed files into a plain javascript object for embedding in the browser
+Embed files into a plain javascript object for embedding in the browser.
+If you are making a web component or simply want to make your web application efficient by minimizing unnecessary Ajax requests, this is an plugin for you.
+With this plugin you can embed a bunch of files together with your javascript code to the browser and access them synchronously in no time.
 
 #Installation
 ------------
@@ -28,14 +30,16 @@ The default encoding is utf8 but you have the option to provide other encodings 
 ##Signature
 
 ```javascript
-embedFiles(fileName, options);
+embedFiles(dest[, options]);
 ```
+
+##dest {String}
+
+The destination file name.
 
 ##Options
 
-###options.dest {String}
-
-If you omit dest parameter, this parameter can be used to set dest. It's just a shorthand.
+An optional object with the following properties.
 
 ###options.space {Number=0} (0 <= space <= 10)
 
@@ -93,6 +97,9 @@ TODO: add an example parsing function
 
 In the spirit of [rule of modularity](http://www.faqs.org/docs/artu/ch01s06.html) this gulp plugin
 doesn't duplicate what is already possible using other gulp plugins.
+
+All the examples have a gulpfile in the [examples directory](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/).
+You can run them using `gulp --gulpfile <FILE.JS>` where `<FILE.JS>` is the name of the gulpfile from examples directory.
 
 So let's see how it plays nicely with others in some of the common use case scenarios:
 
@@ -195,18 +202,12 @@ gulp.task('default', function () {
 ###4. Custom encoding for some files
 
 ```javascript
-var gulp = require('gulp');
-var embedFiles = require('./../index.js');
-
-gulp.task('default', function () {
-  gulp.src('../test/mydir/**/*.txt')
-    .pipe(embedFiles('output4.js', {
-      //Use hex encoding instead of utf-8
-      enc: {
-        '.txt': 'hex'
-      }
-    }))
-    .pipe(gulp.dest('.'));
+.pipe(embedFiles('output4.js', {
+  //Use hex encoding instead of utf-8
+  enc: {
+    '.txt': 'hex'
+  }
+}))
 });
 ```
 
@@ -215,17 +216,11 @@ See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/exampl
 ###5. Change default encoding
 
 ```javascript
-var gulp = require('gulp');
-var embedFiles = require('./../index.js');
-
-gulp.task('default', function () {
-  gulp.src('../test/mydir/**/*.txt')
+gulp.src('../test/mydir/**/*.txt')
     .pipe(embedFiles('output5.json', {
       //By default use base64 encoding when the extension doesn't have a explicit definition in options.enc
       encDefault: 'base64'
     }))
-    .pipe(gulp.dest('.'));
-});
 ```
 
 See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/output5.js)
@@ -235,16 +230,8 @@ See the [output](https://github.com/hanifbbz/gulp-embed-files/blob/master/exampl
 You can use [gulp-debug](https://www.npmjs.com/package/gulp-debug) to get the list of files being processed for any plugin.
 
 ```javascript
-var gulp = require('gulp');
-var debug = require('gulp-debug');
-var embedFiles = require('./../index.js');
-
-gulp.task('default', function () {
-  gulp.src('../test/mydir/**/*.txt')
-    .pipe(embedFiles('output0.js'))
-    .pipe(debug({title: 'files being embedded:'}))
-    .pipe(gulp.dest('.'));
-});
+.pipe(embedFiles('output0.js'))
+.pipe(debug({title: 'files being embedded:'}))
 ```
 
 Will output:
@@ -261,20 +248,10 @@ You can use the default gulp glob convention to exclude files.
 Just start the globe with `!` and you're good to go:
 
 ```javascript
-var gulp = require('gulp');
-var debug = require('gulp-debug');
-var embedFiles = require('./../index.js');
-
-gulp.task('default', function () {
-  //Exclude all the css files
-  gulp.src(['../test/mydir/**/*', '!../test/mydir/**/*.css'])
+//Select all files from mydir except the css files
+gulp.src(['../test/mydir/**/*', '!../test/mydir/**/*.css'])
     //print the list of files being fed into gulp-embed-files plugin just to be sure
     .pipe(debug())
-    .pipe(embedFiles('output7.json', {
-      space: 1
-    }))
-    .pipe(gulp.dest('.'));
-});
 ```
 
 Will process the following files:
@@ -329,13 +306,19 @@ document.body.appendChild(img);
 See the [full source code](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/index8c.html)
 and the [live results](http://rawgit.com/hanifbbz/gulp-embed-files/master/examples/index8c.html).
 
-###Override the base directory
+###9. Override the base directory
 
 TODO: write me!
 
-###Embed several directories
+###10. Embed several directories
 
-TODO: write me!
+You can pass an array of directories to `gulp.src()` in order to add them.
+
+```javascript
+gulp.src(['../test/mydir/biary/**/*', '../test/mydir/img/**/*.css'])
+```
+
+See the [full source code](https://github.com/hanifbbz/gulp-embed-files/blob/master/examples/gulpfile10.js)
 
 #Contributing
 
@@ -345,6 +328,7 @@ TODO: write me!
 4. Push to the branch: git push origin my-new-feature
 5. Submit a pull request
 
+TODO: add more tests: https://github.com/gulpjs/gulp/blob/master/docs/writing-a-plugin/testing.md
 #License
 
 [MIT License](http://opensource.org/licenses/MIT)
